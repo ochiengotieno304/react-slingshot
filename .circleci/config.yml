@@ -1,7 +1,7 @@
 version: 2.1
 
 defaults: &defaults
-  docket:
+  docker:
     - image: cimg:node:13.8.0
 
 jobs:
