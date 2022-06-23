@@ -1,0 +1,61 @@
+version: 2.1
+
+defaults: &defaults
+  docket:
+    - image: cimg:node
+
+jobs:
+  build:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: |
+          npm i
+          npm run lint
+      - save_cache:
+          key: node-modules
+          path: /node_modules
+      - run:
+          name: "build fail"
+          command: "echo build failed"
+          when: on_fail
+
+  test:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: |
+          npm i
+          npm run test
+      - restore_cache:
+          keys: 
+            - node-modules
+      - run:
+          name: "test fail"
+          command: "echo test failed"
+          when: on_fail
+
+  analyze:
+    <<: *defaults
+    steps:
+      - checkout
+      - run: npm audit
+      - restore_cache:
+          keys:
+            - node-modules
+      - run:
+          name: "analyze fail"
+          command: "echo analyze failed"
+          when: on_fail
+
+workflows:
+  some-workflow:
+    jobs:
+      - build
+      - test:
+          requires: 
+            - buid
+      - analyze:
+          requires:
+            - test
+
