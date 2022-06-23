@@ -14,7 +14,8 @@ jobs:
           npm run lint
       - save_cache:
           key: node-modules
-          path: ~/node_modules
+          paths: 
+            - /node_modules
       - run:
           name: "build fail"
           command: "echo build failed"
